@@ -1,0 +1,166 @@
+{
+  "type": "scalar.function",
+  "input_schema": {
+    "type": "object",
+    "description": "A photograph containing a cat to be evaluated for spatial balance — the relationship between the cat subject and its surrounding space.",
+    "properties": {
+      "image": {
+        "type": "image",
+        "description": "A photograph containing a cat. The image will be assessed for how effectively the surrounding space supports the cat as the subject, evaluating visual hierarchy, spatial proportion, and environmental harmony."
+      }
+    },
+    "required": [
+      "image"
+    ]
+  },
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Look at this photograph of a cat. Where does your eye go first? Is the cat the clear, undisputed focal point of the image, or does the surrounding space compete for your attention?"
+            },
+            {
+              "$jmespath": "input.image"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The cat is unmistakably the focal point. My eye lands on it immediately and returns to it naturally. The surrounding space recedes completely — the background is quiet while the cat commands the frame. Every element defers to the subject, and the visual hierarchy is clear and strong."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat draws the eye, but the surrounding space has elements that compete for attention. Parts of the background pull my gaze sideways — through patterns, objects, or visual weight — so that the cat shares the stage rather than commanding it outright. The hierarchy is present but imperfect."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat is not the focal point here. The surrounding space overwhelms it — busy backgrounds, competing objects, or visual clutter fracture attention in multiple directions. The cat becomes one element among many rather than the photograph's reason for existing. There is no clear visual hierarchy."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "developer",
+          "content": [
+            {
+              "type": "text",
+              "text": "You are a composition analyst evaluating photographs of cats. Focus exclusively on spatial proportion: the amount of the frame the cat occupies relative to the surrounding space. There is no single correct ratio. A cat can be small in a vast landscape and feel perfectly placed, just as a tight crop can succeed if the cat does not feel pressed against the edges. What matters is whether the proportion feels natural and deliberate."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.image"
+            },
+            {
+              "type": "text",
+              "text": "How does the spatial proportion feel in this photograph? Does the cat have exactly the space it needs?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The proportion feels exactly right. The cat occupies precisely the right amount of the frame — the balance between subject and surroundings feels natural and inevitable, as though the frame could not have been drawn any other way. The cat has been given exactly the space it needs, no more and no less."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The proportion is reasonable but not quite ideal. The cat has enough space, though the framing feels slightly too loose or slightly too tight. A modest adjustment to the crop would improve the balance, but the current proportion is acceptable and does not seriously harm the image."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The proportion feels clearly wrong. The frame is either so wide that the cat shrinks into insignificance and becomes an incidental detail in a photograph about something else, or so tightly cropped that the cat feels trapped and confined against the borders of the image."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "I took this photograph of a cat:"
+            },
+            {
+              "$jmespath": "input.image"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "I can see the cat and its surroundings. What would you like to know about this photograph?"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Does the environment complement the cat, or does it undermine the cat's presence? I want to know whether the setting provides supportive context — like the warmth of a sunlit floor or the coziness of a blanket — or whether it introduces visual noise through clutter, competing patterns, or unrelated objects."
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The environment and the cat are in beautiful harmony. The surrounding space provides mood and context — warmth, calm, openness — without demanding close attention or stealing focus. The setting feels like a place the cat belongs, telling a quiet story that begins and ends with the subject. Everything in the frame supports the cat in quiet, purposeful partnership."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The environment partially supports the cat but introduces some distractions. There are elements in the surrounding space that provide context and mood, but also areas of visual noise — objects or patterns that draw the eye away from the subject. The setting and the cat coexist but are not fully in conversation with one another."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The environment undermines the cat's presence. The surrounding space is filled with visual noise — cluttered objects, competing patterns, or colors that bear no relationship to the subject. The cat is reduced from protagonist to bystander in its own photograph. The setting and the cat feel like strangers sharing an awkward, disharmonious frame."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    }
+  ],
+  "description": "Scores how effectively the surrounding space in a cat photograph supports the subject. Evaluates visual hierarchy, spatial proportion, and environmental harmony to determine whether the cat commands the frame or is overwhelmed by it."
+}
